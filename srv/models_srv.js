@@ -19,4 +19,12 @@ module.exports =  async srv =>{
 
         console.log(`OrderCreated event logged in OrderHistory for Order ID: ${ID}`);
     });
+
+    srv.on('Agree',async(req,res)=>{
+        try {
+            await cds.run('DROP TRIGGER SALES_HIS_LOG_TRIG')
+        } catch (error) {
+            console.log(error)
+        }
+    })
 } 
