@@ -1,0 +1,24 @@
+TRIGGER "sales_log_trig_onupda"
+AFTER UPDATE ON "MODELS_SALES_HIS2"
+REFERENCING NEW ROW AS MYNEWROW ,OLD ROW AS MYOLDROW
+BEGIN
+    -- Insert into log table for changed fields
+        INSERT INTO MODELS_SALES_HIS2_LOG 
+        VALUES (
+            :MYNEWROW.SALES_DOCUMENT,
+            :MYNEWROW.SALES_DOCUMENT_ITEM,
+            :MYNEWROW.CHARACTERSTIC,
+            'UPDATE',
+            CURRENT_TIMESTAMP,
+            CASE 
+                WHEN :MYNEWROW.CHARACTERSTIC <> :MYOLDROW.CHARACTERSTIC THEN 
+                    'CHARACTERSTIC changed from ' || :MYOLDROW.CHARACTERSTIC || ' to ' || :MYNEWROW.CHARACTERSTIC
+                WHEN :MYNEWROW.CHARACTERSTIC_VALUE <> :MYOLDROW.CHARACTERSTIC_VALUE THEN
+                    'CHARACTERSTIC_VALUE changed from ' || :MYOLDROW.CHARACTERSTIC_VALUE || ' to ' || :MYNEWROW.CHARACTERSTIC_VALUE
+                WHEN :MYNEWROW.PRODUCT_ID <> :MYOLDROW.PRODUCT_ID THEN
+                    'PRODUCT_ID changed from ' || :MYOLDROW.PRODUCT_ID || ' to ' || :MYNEWROW.PRODUCT_ID
+                ELSE
+                    'No significant changes'
+            END
+        );
+END
